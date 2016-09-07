@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  api:
+    build:
+      context: ../port
+      dockerfile: Dockerfile.dockerize
+    command: tcp://db:5432 sh -c 'echo "Hello, Postgres." && touch /var/rproxy/up'
+    links:
+      - db
+    volumes:
+      - rproxy-requests:/var/rproxy
+  db:
+    image: postgres:9.5
+  rproxy:
+    build: .
+    command: echo "Hello, Postgres."
+    volumes:
+      - rproxy-requests:/var/rproxy
+
+volumes:
+  rproxy-requests: {}

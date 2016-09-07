@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  db:
+    image: postgres:9.5
+  db_watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile.watcher
+    command: tcp://db:5432 sh -c 'echo "Hello, Postgres." && mosquitto_pub -r -h broker -t db -m up'
+    links:
+      - broker
+      - db
+  broker:
+    build:
+      context: .
+      dockerfile: Dockerfile.mqtt
+  my_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dependent
+    command: -c '`mosquitto_sub -h broker -t db -C 1 > /dev/null` && echo "Hello from my service, Postgres."'
+    links:
+      - broker
+  my_other_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dependent
+    command: -c '`mosquitto_sub -h broker -t db -C 1 > /dev/null` && echo "Hello from my other service, Postgres."'
+    links:
+      - broker
+

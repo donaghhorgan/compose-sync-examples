@@ -1,0 +1,7 @@
+FROM alpine:3.3
+MAINTAINER Donagh Horgan <donagh.horgan@gmail.com>
+
+RUN apk add --update mosquitto
+
+ENTRYPOINT ["mosquitto"]
+CMD ["-c", "/etc/mosquitto/mosquitto.conf"]

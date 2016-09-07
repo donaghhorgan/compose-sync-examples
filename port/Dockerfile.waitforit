@@ -1,0 +1,15 @@
+FROM alpine:3.3
+MAINTAINER Donagh Horgan <donagh.horgan@gmail.com>
+
+RUN apk --no-cache add bash ca-certificates
+
+# Dirty hack due to https://github.com/vishnubob/wait-for-it/issues/5
+WORKDIR /usr/bin
+RUN rm timeout && \
+    echo '/bin/busybox timeout -t "$@"' > timeout && \
+    chmod +x timeout
+
+WORKDIR /usr/local/bin
+RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
+    chmod +x wait-for-it.sh
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/wait-for-it.sh"]

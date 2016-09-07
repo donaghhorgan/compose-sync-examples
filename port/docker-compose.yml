@@ -1,0 +1,19 @@
+version: '2'
+
+services:  
+  api-waitforit:
+    build:
+      context: .
+      dockerfile: Dockerfile.waitforit
+    command: db:5432 -s -t 30 -- echo "Hello, Postgres."
+    links:
+      - db
+  api-dockerize:
+    build:
+      context: .
+      dockerfile: Dockerfile.dockerize
+    command: tcp://db:5432 echo "Hello, Postgres."
+    links:
+      - db
+  db:
+    image: postgres:9.5

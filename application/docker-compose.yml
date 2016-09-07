@@ -1,0 +1,10 @@
+version: '2'
+
+services:  
+  api:
+    build: .
+    command: db echo "Hello, Postgres."
+    links:
+      - db
+  db:
+    image: postgres:9.5
